@@ -21,8 +21,21 @@ class InstallController extends Controller
 
     public static function composerPostInstallCmd($event)
     {
-        var_dump($event->getComposer()->getConfig()->get('env'));
-        echo 'composer post install cmd...';
+        $envFile = __DIR__ . '/../config/env.php';
+        if (!is_file($envFile)) {
+            $env = getenv('YII_ENV');
+            if (!$env) {
+                $env = $event->getComposer()->getConfig()->get('YII_ENV');
+            }
+            if (!$env) {
+                $env = 'local';
+            }
+
+            file_put_contents($envFile, "<?php return '$env';");
+            echo "env file created for '" . $env . "' environment \n";
+        }
+
+        echo "composer post install ... ok";
     }
 
     /**
