@@ -18,11 +18,7 @@
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
-    "yiisoft/yii2-gii": "~2.0.0",
-    "yiisoft/yii2-faker": "~2.0.0",
-    "codeception/base": "^2.2.3",
-    "codeception/verify": "~0.3.1",
-    "codeception/specify": "~0.4.3"
+    "yiisoft/yii2-gii": "~2.0.0"
   },
   "config": {
     "process-timeout": 1800
@@ -30,7 +26,13 @@
   "scripts": {
     "post-create-project-cmd": [
       "yii\\composer\\Installer::postCreateProject"
-    ]
+    ],
+    "post-install-cmd": "app\\commands\\InstallController::composerPostInstallCmd"
+  },
+  "autoload": {
+    "psr-4": {
+      "app\\": ""
+    }
   },
   "extra": {
     "yii\\composer\\Installer::postCreateProject": {
@@ -48,6 +50,7 @@
     "asset-installer-paths": {
       "npm-asset-library": "vendor/npm",
       "bower-asset-library": "vendor/bower"
-    }
+    },
+    "env": "rarex"
   }
 }
