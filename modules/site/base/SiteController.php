@@ -1,9 +1,9 @@
 <?php
 namespace app\modules\site\base;
 
-use app\modules\base\WebController;
+use yii\web\Controller;
 
-class SiteController extends WebController
+class SiteController extends Controller
 {
 
 }

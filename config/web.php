@@ -1,64 +1,42 @@
-<?php
-
-$params = require(__DIR__ . '/params.php');
-
-$config = [
-    'id' => 'basic',
-    'basePath' => dirname(__DIR__),
+<?php return \yii\helpers\ArrayHelper::merge(require(__DIR__ . '/base.php'), [
+    'id' => 'yii2-empty-web',
     'bootstrap' => ['log'],
     'components' => [
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'secret-key',
+            'cookieValidationKey' => 'e74471db7e6656b8fc07a2a090809686',
         ],
-        'cache' => [
-            'class' => 'yii\caching\FileCache',
+        'assetManager' => [
+            'class' => \yii\web\AssetManager::class,
+            'linkAssets' => YII_ENV_PROD,
         ],
         'errorHandler' => [
             'errorAction' => 'site/default/error',
         ],
-        'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-            'useFileTransport' => true,
-        ],
         'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
+                    'class' => \yii\log\FileTarget::class,
                     'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/web.log',
                 ],
             ],
         ],
-        'db' => require(__DIR__ . '/db.php'),
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-            ],
+        'session' => [
+            'class' => \app\base\Session::class,
+            'name' => '_user_session',
+            'savePath' => '@runtime/session',
         ],
-        */
-    ],
-    'modules' => [
-        'site' => [
-            'class' => 'app\modules\site\Module',
+        'mailer' => [
+            'class' => \yii\swiftmailer\Mailer::class,
+            'useFileTransport' => true,
         ],
     ],
-    'params' => $params,
-];
-
-if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
-    $config['bootstrap'][] = 'debug';
-    $config['modules']['debug'] = [
-        'class' => 'yii\debug\Module',
-    ];
-
-    $config['bootstrap'][] = 'gii';
-    $config['modules']['gii'] = [
-        'class' => 'yii\gii\Module',
-    ];
-}
-
-return $config;
+    'on beforeRequest' => function () {
+        // SEO: redirect "/page/" to "/page" instead 404 error
+        $pathInfo = Yii::$app->getRequest()->getPathInfo();
+        if ($pathInfo && substr($pathInfo, -1) === '/') {
+            Yii::$app->getResponse()->redirect('/' . rtrim($pathInfo, '/'), 301);
+            Yii::$app->end();
+        }
+    },
+], require(__DIR__ . '/autoload.php'), is_file(__DIR__ . '/override.php') ? require(__DIR__ . '/override.php') : []);

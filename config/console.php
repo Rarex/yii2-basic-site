@@ -1,43 +1,16 @@
-<?php
-
-$params = require(__DIR__ . '/params.php');
-$db = require(__DIR__ . '/db.php');
-
-$config = [
-    'id' => 'basic-console',
-    'basePath' => dirname(__DIR__),
+<?php return \yii\helpers\ArrayHelper::merge(require(__DIR__ . '/base.php'), [
+    'id' => 'yii2-empty-console',
     'bootstrap' => ['log'],
     'controllerNamespace' => 'app\commands',
     'components' => [
-        'cache' => [
-            'class' => 'yii\caching\FileCache',
-        ],
         'log' => [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/console.log',
                 ],
             ],
         ],
-        'db' => $db,
     ],
-    'params' => $params,
-    /*
-    'controllerMap' => [
-        'fixture' => [ // Fixture generation command line.
-            'class' => 'yii\faker\FixtureController',
-        ],
-    ],
-    */
-];
-
-if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
-    $config['bootstrap'][] = 'gii';
-    $config['modules']['gii'] = [
-        'class' => 'yii\gii\Module',
-    ];
-}
-
-return $config;
+], require(__DIR__ . '/autoload.php'), is_file(__DIR__ . '/override.php') ? require(__DIR__ . '/override.php') : []);

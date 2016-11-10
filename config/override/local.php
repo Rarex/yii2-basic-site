@@ -6,7 +6,7 @@
             'password' => '',
         ],*/
         'urlManager' => [
-            'hostInfo' => 'yii2-basic-site.dev',
+            'hostInfo' => 'yii2-basic-site.local',
         ],
     ],
 ];
